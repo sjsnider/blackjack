@@ -7,6 +7,33 @@ class window.Hand extends Backbone.Collection
   hit: ->
     @add(@deck.pop()).last()
 
+  stand: ->
+    @trigger 'playerStand', @
+
+  dealerPlay: ->
+    do @at(0).flip
+    # score = do @scores
+    that = this
+    scoreChecker = (score) ->
+      if score.length is 1
+        if score[0] < 17
+          do that.hit
+          scoreChecker (do that.scores)
+        # else alert('dealer done')
+        true
+      else if score.length is 2
+        if score[1] <= 17
+          do that.hit
+          scoreChecker (do that.scores)
+        else if score[0] <17
+          do that.hit
+          scoreChecker (do that.scores)
+        else
+         # alert('decide winner')
+         true
+    scoreChecker (do that.scores)
+    return
+
   scores: ->
     # The scores are an array of potential scores.
     # Usually, that array contains one element. That is the only score.
