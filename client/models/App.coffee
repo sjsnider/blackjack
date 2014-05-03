@@ -10,14 +10,14 @@ class window.App extends Backbone.Model
 
     dealer = @get 'dealerHand'
     player = @get 'playerHand'
-    player.on 'bust', ->
+    player.on 'dealerFlip', ->
       do dealer.at(0).flip
-      @set 'newGame', true
+      # @set 'newGame', true
     , @
 
     player.on 'playerStand', =>
       do dealer.dealerPlay
-      @set 'newGame', true
+      # @set 'newGame', true
     , @
     @on 'reset', =>
       @set 'deck', deck = new Deck()
@@ -29,12 +29,12 @@ class window.App extends Backbone.Model
       dealer = @get 'dealerHand'
 
       player = @get 'playerHand'
-      player.on 'bust', ->
+      player.on 'dealerFlip', ->
         do dealer.at(0).flip
-        @set 'newGame', true
+        # @set 'newGame', true
       , @
 
       player.on 'playerStand', ->
         do dealer.dealerPlay
-        @set 'newGame', true
+        # @set 'newGame', true
       , @

@@ -12,7 +12,7 @@
 
     HandView.prototype.className = 'hand';
 
-    HandView.prototype.template = _.template('<h2><% if(isDealer){ %>Dealer<% }else{ %>You<% } %> (<span class="score"></span>)<span class="bust"></span></h2>');
+    HandView.prototype.template = _.template('<h2><% if(isDealer){ %>Dealer<% }else{ %>You<% } %> (<span class="score"></span>)<span class="<% if(isDealer){ %>dealer<% }else{ %>player<% } %> bust"></span></h2>');
 
     HandView.prototype.initialize = function() {
       this.collection.on('add remove change', (function(_this) {
@@ -24,8 +24,8 @@
     };
 
     HandView.prototype.render = function() {
-      var score;
-      score = this.collection.scores()[0];
+      var score, selector;
+      score = this.collection.scores();
       this.$el.children().detach();
       this.$el.html(this.template(this.collection));
       this.$el.append(this.collection.map(function(card) {
@@ -33,8 +33,12 @@
           model: card
         }).$el;
       }));
-      this.$('.bust').text(score > 21 ? "Bust!" : "");
-      return this.$('.score').text(score);
+      selector = this.collection.isDealer ? '.dealer.bust' : '.player.bust';
+      this.$(selector).text(score[0]);
+      this.$('.score').text(score[1]);
+      if (score[0] !== '') {
+        return $('.hit-button, .stand-button').addClass('disable');
+      }
     };
 
     return HandView;

@@ -30,20 +30,22 @@
       this.at(0).flip();
       that = this;
       scoreChecker = function(score) {
-        if (score.length === 1) {
-          if (score[0] < 17) {
+        if (score.length === 2) {
+          if (score[1] < 17) {
             that.hit();
             scoreChecker(that.scores());
+            $('.hit-button, .stand-button').addClass('disable');
+            return true;
           }
-          return true;
-        } else if (score.length === 2) {
-          if (score[1] <= 17) {
+        } else if (score.length === 3) {
+          if (score[2] <= 17) {
             that.hit();
             return scoreChecker(that.scores());
-          } else if (score[0] < 17) {
+          } else if (score[1] < 17) {
             that.hit();
             return scoreChecker(that.scores());
           } else {
+            $('.hit-button, .stand-button').addClass('disable');
             return true;
           }
         }
@@ -52,20 +54,26 @@
     };
 
     Hand.prototype.scores = function() {
-      var hasAce, score;
+      var hasAce, msg, score;
+      msg = '';
       hasAce = this.reduce(function(memo, card) {
         return memo || card.get('value') === 1;
       }, false);
       score = this.reduce(function(score, card) {
         return score + (card.get('revealed') ? card.get('value') : 0);
       }, 0);
+      if ((score + 10) === 21 && this.length === 2 && hasAce) {
+        msg = 'blackJack';
+        this.trigger('dealerFlip', this);
+      }
       if (score > 21) {
-        this.trigger('bust', this);
+        msg = 'bust';
+        this.trigger('dealerFlip', this);
       }
       if (hasAce) {
-        return [score, score + 10];
+        return [msg, score, score + 10];
       } else {
-        return [score];
+        return [msg, score];
       }
     };
 

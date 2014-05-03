@@ -25,11 +25,11 @@
     };
 
     AppView.prototype.initialize = function() {
-      this.model.on('change:newGame', (function(_this) {
-        return function() {
-          return _this.bust();
-        };
-      })(this));
+      // this.model.on('change:newGame', (function(_this) {
+      //   return function() {
+      //     return _this.bust();
+      //   };
+      // })(this));
       this.model.on('change:hands', (function(_this) {
         return function() {
           return _this.render();

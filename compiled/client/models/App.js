@@ -19,14 +19,12 @@
       this.set('hands', 1);
       dealer = this.get('dealerHand');
       player = this.get('playerHand');
-      player.on('bust', function() {
-        dealer.at(0).flip();
-        return this.set('newGame', true);
+      player.on('dealerFlip', function() {
+        return dealer.at(0).flip();
       }, this);
       player.on('playerStand', (function(_this) {
         return function() {
-          dealer.dealerPlay();
-          return _this.set('newGame', true);
+          return dealer.dealerPlay();
         };
       })(this), this);
       return this.on('reset', (function(_this) {
@@ -38,13 +36,11 @@
           _this.set('hands', _this.get('hands') + 1);
           dealer = _this.get('dealerHand');
           player = _this.get('playerHand');
-          player.on('bust', function() {
-            dealer.at(0).flip();
-            return this.set('newGame', true);
+          player.on('dealerFlip', function() {
+            return dealer.at(0).flip();
           }, _this);
           return player.on('playerStand', function() {
-            dealer.dealerPlay();
-            return this.set('newGame', true);
+            return dealer.dealerPlay();
           }, _this);
         };
       })(this));
