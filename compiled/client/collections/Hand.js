@@ -22,7 +22,7 @@
     };
 
     Hand.prototype.stand = function() {
-      return this.trigger('playerStand', this);
+      return this.trigger('stand', this);
     };
 
     Hand.prototype.dealerPlay = function() {
@@ -33,7 +33,9 @@
         if (score.length === 2) {
           if (score[1] < 17) {
             that.hit();
-            scoreChecker(that.scores());
+            return scoreChecker(that.scores());
+          } else {
+            that.trigger('stand');
             $('.hit-button, .stand-button').addClass('disable');
             return true;
           }
@@ -45,6 +47,7 @@
             that.hit();
             return scoreChecker(that.scores());
           } else {
+            that.trigger('stand');
             $('.hit-button, .stand-button').addClass('disable');
             return true;
           }
@@ -63,12 +66,12 @@
         return score + (card.get('revealed') ? card.get('value') : 0);
       }, 0);
       if ((score + 10) === 21 && this.length === 2 && hasAce) {
-        msg = 'blackJack';
-        this.trigger('dealerFlip', this);
+        msg = 'BlackJack!!';
+        this.trigger('blackJack', this);
       }
       if (score > 21) {
-        msg = 'bust';
-        this.trigger('dealerFlip', this);
+        msg = 'Bust!!';
+        this.trigger('bust', this);
       }
       if (hasAce) {
         return [msg, score, score + 10];

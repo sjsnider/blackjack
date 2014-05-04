@@ -11,39 +11,59 @@
     }
 
     App.prototype.initialize = function() {
-      var dealer, deck, player;
+      var deck;
       this.set('deck', deck = new Deck());
       this.set('playerHand', deck.dealPlayer());
       this.set('dealerHand', deck.dealDealer());
-      this.set('newGame', false);
       this.set('hands', 1);
-      dealer = this.get('dealerHand');
-      player = this.get('playerHand');
-      player.on('dealerFlip', function() {
-        return dealer.at(0).flip();
-      }, this);
-      player.on('playerStand', (function(_this) {
-        return function() {
-          return dealer.dealerPlay();
-        };
-      })(this), this);
+      this.set('cash', 500);
+      this.set('bet', 5);
+      this.get('playerHand').on('all', this.playerEvents, this);
+      this.get('dealerHand').on('all', this.dealerEvents, this);
       return this.on('reset', (function(_this) {
         return function() {
           _this.set('deck', deck = new Deck());
           _this.set('playerHand', deck.dealPlayer());
           _this.set('dealerHand', deck.dealDealer());
-          _this.set('newGame', false);
           _this.set('hands', _this.get('hands') + 1);
-          dealer = _this.get('dealerHand');
-          player = _this.get('playerHand');
-          player.on('dealerFlip', function() {
-            return dealer.at(0).flip();
-          }, _this);
-          return player.on('playerStand', function() {
-            return dealer.dealerPlay();
-          }, _this);
+          _this.get('playerHand').on('all', _this.playerEvents, _this);
+          return _this.get('dealerHand').on('all', _this.dealerEvents, _this);
         };
       })(this));
+    };
+
+    App.prototype.dealerEvents = function(event) {
+      switch (event) {
+        case 'bust':
+          break;
+        case 'stand':
+          return this.showDown();
+      }
+    };
+
+    App.prototype.playerEvents = function(event) {
+      switch (event) {
+        case 'bust':
+          return this.get('dealerHand').at(0).flip();
+        case 'stand':
+          return this.get('dealerHand').dealerPlay();
+        case 'blackJack':
+          return this.get('dealerHand').at(0).flip();
+      }
+    };
+
+    App.prototype.showDown = function() {
+      var d, dScore, p, pScore;
+      dScore = this.get('dealerHand').scores();
+      pScore = this.get('playerHand').scores();
+      p = pScore[2] <= 21 ? pScore[2] : pScore[1];
+      d = dScore[2] <= 21 ? dScore[2] : dScore[1];
+      if (p > d) {
+        this.set('cash', this.get('cash') + this.get('bet'));
+      } else if (p < d) {
+        this.set('cash', this.get('cash') - this.get('bet'));
+      }
+      return this.trigger('reset', this);
     };
 
     return App;

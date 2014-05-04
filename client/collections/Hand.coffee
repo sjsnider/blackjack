@@ -8,7 +8,7 @@ class window.Hand extends Backbone.Collection
     @add(@deck.pop()).last()
 
   stand: ->
-    @trigger 'playerStand', @
+    @trigger 'stand', @
 
   dealerPlay: ->
     do @at(0).flip
@@ -19,6 +19,8 @@ class window.Hand extends Backbone.Collection
         if score[1] < 17
           do that.hit
           scoreChecker (do that.scores)
+        else
+          that.trigger 'stand'
           $('.hit-button, .stand-button').addClass('disable')
           true
       else if score.length is 3
@@ -29,6 +31,7 @@ class window.Hand extends Backbone.Collection
           do that.hit
           scoreChecker (do that.scores)
         else
+          that.trigger 'stand'
           $('.hit-button, .stand-button').addClass('disable')
           true
     scoreChecker (do that.scores)
@@ -46,9 +49,9 @@ class window.Hand extends Backbone.Collection
       score + if card.get 'revealed' then card.get 'value' else 0
     , 0
     if (score + 10) == 21 and @length == 2 and hasAce
-      msg = 'blackJack'
-      @trigger 'dealerFlip', @
+      msg = 'BlackJack!!'
+      @trigger 'blackJack', @
     if score > 21
-      msg = 'bust'
-      @trigger 'dealerFlip', @
+      msg = 'Bust!!'
+      @trigger 'bust', @
     if hasAce then [msg, score, score + 10] else [msg, score]
