@@ -14,3 +14,17 @@
 .hand {
   overflow: auto;
 }
+
+.bust {
+  color: red;
+  margin-left: 10px;
+}
+
+.disable{
+  display: none;
+}
+
+input{
+  margin-left: 10px;
+  width: 25px;
+}
